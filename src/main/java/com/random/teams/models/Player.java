@@ -51,6 +51,12 @@ public class Player {
     @Column(name = "goal", nullable = false)
     private Integer goal;
 
+    @NotNull(message = "rating is mandatory")
+    @Min(value = 1, message = "rating must be at least 1")
+    @Max(value = 10, message = "rating must be at most 10")
+    @Column(name = "rating", nullable = false)
+    private Float rating;
+
     @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.MERGE)
     @JoinColumn(name = "id_user")
     private User user;

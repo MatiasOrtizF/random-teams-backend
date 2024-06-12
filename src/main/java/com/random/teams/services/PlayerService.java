@@ -32,6 +32,10 @@ public class PlayerService {
             Long userId = authService.getUserId(token);
             if(playerRepository.findByUserId(userId).size() < 50) {
                 User user = userRepository.findById(userId).orElseThrow(()-> new ResourceNotFoundException("The user with this id:" + userId + "is not found"));
+
+                float rating = calculateRating(player);
+
+                player.setRating(rating);
                 player.setUser(user);
 
                 return playerRepository.save(player);
@@ -69,11 +73,25 @@ public class PlayerService {
             player.setSkill(playerRequest.getSkill());
             player.setResistance(playerRequest.getResistance());
 
+            float rating = calculateRating(player);
+            player.setRating(rating);
+
             return playerRepository.save(player);
         } throw new UnauthorizedException();
     }
 
     private int getQuantityPlayersSave(Long userId) {
         return playerRepository.findByUserId(userId).size();
+    }
+
+    private float calculateRating(Player player) {
+
+        int defense =  player.getDefense();
+        int goal =  player.getGoal();
+        int goalkeeper = player.getGoalkeeper();
+        int resistance = player.getResistance();
+        int skill = player.getSkill();
+
+        return (float) (defense + goal + goalkeeper + resistance + skill) /5;
     }
 }
